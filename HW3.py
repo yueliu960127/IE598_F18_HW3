@@ -146,16 +146,16 @@ dataRow3 = rocksVMines.iloc[2,0:60]
 
 plot.scatter(dataRow2, dataRow3)
 
-plot.xlabel("2nd Attribute")
-plot.ylabel(("3rd Attribute"))
+plot.xlabel("2nd instances")
+plot.ylabel(("3rd instances"))
 plot.show()
 
 dataRow21 = rocksVMines.iloc[20,0:60]
 
 plot.scatter(dataRow2, dataRow21)
 
-plot.xlabel("2nd Attribute")
-plot.ylabel(("21st Attribute"))
+plot.xlabel("2nd instances")
+plot.ylabel(("21st instances"))
 plot.show()
 
 
@@ -232,211 +232,6 @@ corMat = DataFrame(rocksVMines.corr())
 
 #visualize correlations using heatmap
 plot.pcolor(corMat)
-plot.show()
-
-
-#2.11
-#from pylab import *
-#read abalone data
-target_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data")
-#read abalone data
-abalone = pd.read_csv(target_url,header=None, prefix="V")
-abalone.columns = ['Sex', 'Length', 'Diameter', 'Height','Whole weight','Shucked weight', 'Viscera weight','Shell weight', 'Rings']
-
-print(abalone.head())
-print(abalone.tail())
-#print summary of data frame
-summary = abalone.describe()
-print(summary)
-
-#box plot the real-valued attributes
-#convert to array for plot routine
-array = abalone.iloc[:,1:9].values
-plot.boxplot(array)
-plot.xlabel("Attribute Index")
-plot.ylabel(("Quartile Ranges"))
-plot.show()
-
-#the last column (rings) is out of scale with the rest
-# - remove and replot
-array2 = abalone.iloc[:,1:8].values
-plot.boxplot(array2)
-plot.xlabel("Attribute Index")
-plot.ylabel(("Quartile Ranges"))
-plot.show()
-
-abaloneNormalized = abalone.iloc[:,1:9]
-
-for i in range(8):
-    mean = summary.iloc[1, i]
-    sd = summary.iloc[2, i]
-    
-abaloneNormalized.iloc[:,i:(i + 1)] = (abaloneNormalized.iloc[:,i:(i + 1)] - mean) / sd
-
-array3 = abaloneNormalized.values
-plot.boxplot(array3)
-plot.xlabel("Attribute Index")
-plot.ylabel(("Quartile Ranges - Normalized "))
-plot.show()
-
-#2.12
-from math import exp
-#get summary to use for scaling
-summary = abalone.describe()
-minRings = summary.iloc[3,7]
-maxRings = summary.iloc[7,7]
-nrows = len(abalone.index)
-
-for i in range(nrows):
-#plot rows of data as if they were series data
-    dataRow = abalone.iloc[i,1:8]
-    labelColor = (abalone.iloc[i,8] - minRings) / (maxRings - minRings)
-    dataRow.plot(color=plot.cm.RdYlBu(labelColor), alpha=0.5)
-
-plot.xlabel("Attribute Index")
-plot.ylabel(("Attribute Values"))
-plot.show()
-
-#renormalize using mean and standard variation, then compress
-# with logit function
-meanRings = summary.iloc[1,7]
-sdRings = summary.iloc[2,7]
-
-for i in range(nrows):
-#plot rows of data as if they were series data
-    dataRow = abalone.iloc[i,1:8]
-    normTarget = (abalone.iloc[i,8] - meanRings)/sdRings
-    labelColor = 1.0/(1.0 + exp(-normTarget))
-    dataRow.plot(color=plot.cm.RdYlBu(labelColor), alpha=0.5)
-
-plot.xlabel("Attribute Index")
-plot.ylabel(("Attribute Values"))
-plot.show()
-
-
-#2.13
-#calculate correlation matrix
-corMat = DataFrame(abalone.iloc[:,1:9].corr())
-#print correlation matrix
-print(corMat)
-
-#visualize correlations using heatmap
-plot.pcolor(corMat)
-plot.show()
-
-
-#2.14
-target_url = ("http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv")
-wine = pd.read_csv(target_url,header=0, sep=";")
-print(wine.head())
-
-summary = wine.describe()
-print(summary)
-
-wineNormalized = wine
-ncols = len(wineNormalized.columns)
-
-for i in range(ncols):
-    mean = summary.iloc[1, i]
-    sd = summary.iloc[2, i]
-
-wineNormalized.iloc[:,i:(i + 1)] = (wineNormalized.iloc[:,i:(i + 1)] - mean) / sd
-
-array = wineNormalized.values
-plot.boxplot(array)
-plot.xlabel("Attribute Index")
-plot.ylabel(("Quartile Ranges - Normalized "))
-plot.show()
-
-
-#2.15
-#generate statistical summaries
-summary = wine.describe()
-nrows = len(wine.index)
-tasteCol = len(summary.columns)
-meanTaste = summary.iloc[1,tasteCol - 1]
-sdTaste = summary.iloc[2,tasteCol - 1]
-nDataCol = len(wine.columns) -1
-
-for i in range(nrows):
-#plot rows of data as if they were series data
-    dataRow = wine.iloc[i,1:nDataCol]
-    normTarget = (wine.iloc[i,nDataCol] - meanTaste)/sdTaste
-    labelColor = 1.0/(1.0 + exp(-normTarget))
-    dataRow.plot(color=plot.cm.RdYlBu(labelColor), alpha=0.5)
-
-plot.xlabel("Attribute Index")
-plot.ylabel(("Attribute Values"))
-plot.show()
-
-wineNormalized = wine
-ncols = len(wineNormalized.columns)
-
-for i in range(ncols):
-    mean = summary.iloc[1, i]
-    sd = summary.iloc[2, i]
-    wineNormalized.iloc[:,i:(i + 1)] =(wineNormalized.iloc[:,i:(i + 1)] - mean) / sd
-
-for i in range(nrows):
-#plot rows of data as if they were series data
-    dataRow = wineNormalized.iloc[i,1:nDataCol]
-    normTarget = wineNormalized.iloc[i,nDataCol]
-    labelColor = 1.0/(1.0 + exp(-normTarget))
-    dataRow.plot(color=plot.cm.RdYlBu(labelColor), alpha=0.5)
-
-plot.xlabel("Attribute Index")
-plot.ylabel(("Attribute Values"))
-plot.show()
-
-
-#2.16
-target_url = ("https://archive.ics.uci.edu/ml/machine-learning-databases/glass/glass.data")
-glass = pd.read_csv(target_url,header=None, prefix="V")
-glass.columns = ['Id', 'RI', 'Na', 'Mg', 'Al', 'Si','K', 'Ca', 'Ba', 'Fe', 'Type']
-print(glass.head())
-#generate statistical summaries
-summary = glass.describe()
-print(summary)
-ncol1 = len(glass.columns)
-
-glassNormalized = glass.iloc[:, 1:ncol1]
-ncol2 = len(glassNormalized.columns)
-summary2 = glassNormalized.describe()
-
-for i in range(ncol2):
-    mean = summary2.iloc[1, i]
-    sd = summary2.iloc[2, i]
-
-glassNormalized.iloc[:,i:(i + 1)] = (glassNormalized.iloc[:,i:(i + 1)] - mean) / sd
-
-array = glassNormalized.values
-plot.boxplot(array)
-plot.xlabel("Attribute Index")
-plot.ylabel(("Quartile Ranges - Normalized "))
-plot.show()
-
-
-#2.17
-glassNormalized = glass
-ncols = len(glassNormalized.columns)
-nrows = len(glassNormalized.index)
-summary = glassNormalized.describe()
-nDataCol = ncols - 1
-#normalize except for labels
-for i in range(ncols - 1):
-    mean = summary.iloc[1, i]
-    sd = summary.iloc[2, i]
-
-glassNormalized.iloc[:,i:(i + 1)] =(glassNormalized.iloc[:,i:(i + 1)] - mean) / sd
-
-for i in range(nrows):
-#plot rows of data as if they were series data
-    dataRow = glassNormalized.iloc[i,1:nDataCol]
-    labelColor = glassNormalized.iloc[i,nDataCol]/7.0
-    dataRow.plot(color=plot.cm.RdYlBu(labelColor), alpha=0.5)
-
-plot.xlabel("Attribute Index")
-plot.ylabel(("Attribute Values"))
 plot.show()
 
 print("My name is {Yue Liu}")
